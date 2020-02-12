@@ -121,3 +121,46 @@ JOIN employees AS me ON dm.emp_no = me.emp_no
 JOIN departments AS d ON d.dept_no = de.dept_no
 WHERE dm.to_date = "9999-01-01"
 AND de.to_date = "9999-01-01";
+
+-- Bonus Find the highest paid employee in each department.
+
+SELECT d.dept_name,
+    CONCAT(e.first_name, " ", e.last_name) AS "Employee Name",
+    s.salary
+FROM employees AS e
+JOIN dept_emp AS de ON de.emp_no = e.emp_no
+JOIN departments AS d ON d.dept_no = de.dept_no
+JOIN salaries AS s ON s.emp_no = e.emp_no
+WHERE s.salary IN (
+	SELECT MAX(s.salary)
+	FROM employees AS e
+	JOIN dept_emp AS de ON de.emp_no = e.emp_no
+	JOIN departments AS d ON d.dept_no = de.dept_no
+	JOIN salaries AS s ON s.emp_no = e.emp_no
+	WHERE s.to_date = "9999-01-01"
+	GROUP BY d.dept_name)
+AND de.to_date = "9999-01-01"
+AND s.to_date = "9999-01-01"
+ORDER BY dept_name;
+-- Not correct yet. 
+
+-- Solution from Chase
+SELECT 
+ 	CONCAT(e.first_name,' ',e.last_name) AS "Employee Name", 
+ 	d.dept_name AS "Department Name",
+ 	ms.max_salary_by_department AS "Salary"
+ FROM employees e
+ 	JOIN dept_emp de ON de.emp_no = e.emp_no
+ 	JOIN departments d ON de.dept_no = d.dept_no 
+ 	JOIN salaries s ON e.emp_no = s.emp_no
+ 	JOIN (
+ 		SELECT
+ 		MAX(s.salary) AS "max_salary_by_department",
+ 		d.dept_name 
+		FROM salaries AS s
+		JOIN employees AS e ON e.emp_no = s.emp_no
+		JOIN dept_emp AS de ON de.emp_no = e.emp_no
+		JOIN departments AS d ON d.dept_no = de.dept_no
+		GROUP BY d.dept_name
+		) AS ms ON ms.dept_name = d.dept_name AND ms.max_salary_by_department = s.salary
+ WHERE de.to_date = '9999-01-01' AND s.to_date = '9999-01-01';
