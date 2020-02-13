@@ -56,13 +56,29 @@ WHERE salary >= (
 	FROM salaries)
 AND to_date > NOW();
 -- What percentage of all salaries is this?
-SELECT (SELECT COUNT(*) AS num_salaries_one_std_from_max
+SELECT ((SELECT COUNT(*) AS num_salaries_one_std_from_max
 		FROM salaries
 		WHERE salary >= (
 			SELECT MAX(salary) - STD(salary)
 			FROM salaries)
 		AND to_date > NOW()
 		)
-	/ COUNT(*)
+	/ COUNT(*) * 100) AS percent_sal_one_std_from_max
 FROM salaries
 WHERE to_date > NOW();
+
+-- Find all the department names that currently have female managers.
+SELECT dept_name
+FROM departments
+WHERE dept_no IN (
+	SELECT dept_no
+	FROM dept_manager AS dm
+	WHERE dm.to_date > NOW()
+	AND emp_no IN (
+		SELECT emp_no
+		FROM employees
+		WHERE gender = "F"
+		)
+	);
+
+-- Find the first and last name of the employee with the highest salary.
