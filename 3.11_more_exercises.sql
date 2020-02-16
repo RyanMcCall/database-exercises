@@ -128,3 +128,67 @@ ORDER BY last_name, first_name;
 
 -- Using IN, display the country_id and country columns for the following countries:
 --  Afghanistan, Bangladesh, and China.
+SELECT country_id, country
+FROM country
+WHERE country IN ("Afghanistan", "Bangladesh", "China");
+
+-- List the last names of all the actors, as well as how many actors have that last name.
+SELECT last_name, COUNT(*) actors_with_last_name
+FROM actor
+GROUP BY last_name;
+
+-- List last names of actors and the number of actors who have that last name, but only
+-- for names that are shared by at least two actors
+SELECT last_name, COUNT(*) actors_with_last_name
+FROM actor
+GROUP BY last_name
+HAVING COUNT(*) > 2;
+
+-- You cannot locate the schema of the address table. Which query would you use to
+-- re-create it?
+SHOW CREATE TABLE address;
+-- CREATE TABLE `address` (
+--   `address_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+--   `address` varchar(50) NOT NULL,
+--   `address2` varchar(50) DEFAULT NULL,
+--   `district` varchar(20) NOT NULL,
+--   `city_id` smallint(5) unsigned NOT NULL,
+--   `postal_code` varchar(10) DEFAULT NULL,
+--   `phone` varchar(20) NOT NULL,
+--   `location` geometry NOT NULL,
+--   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+--   PRIMARY KEY (`address_id`),
+--   KEY `idx_fk_city_id` (`city_id`),
+--   SPATIAL KEY `idx_location` (`location`),
+--   CONSTRAINT `fk_address_city` FOREIGN KEY (`city_id`) REFERENCES `city` (`city_id`) ON UPDATE CASCADE
+-- ) ENGINE=InnoDB AUTO_INCREMENT=606 DEFAULT CHARSET=utf8
+
+-- Use JOIN to display the first and last names, as well as the address, of each staff
+-- member.
+SELECT first_name, last_name, address
+FROM staff s
+JOIN address a ON s.address_id = a.address_id;
+
+-- Use JOIN to display the total amount rung up by each staff member in August of 2005.
+SELECT s.staff_id, s.first_name, s.last_name, SUM(p.amount)
+FROM payment p
+JOIN staff s ON s.staff_id = p.staff_id
+WHERE payment_date LIKE "2005-08%"
+GROUP BY s.staff_id, s.first_name, s.last_name;
+
+-- List each film and the number of actors who are listed for that film.
+SELECT f.title, COUNT(*) num_actors
+FROM film f
+JOIN film_actor fa ON f.film_id = fa.film_id
+GROUP BY f.title;
+
+-- How many copies of the film Hunchback Impossible exist in the inventory system?
+SELECT f.title, COUNT(*) num_copies
+FROM inventory i
+JOIN film f ON f.film_id = i.film_id
+WHERE f.title = "Hunchback Impossible";
+
+-- The music of Queen and Kris Kristofferson have seen an unlikely resurgence. As an 
+-- unintended consequence, films starting with the letters K and Q have also soared in 
+-- popularity. Use subqueries to display the titles of movies starting with the letters K 
+-- and Q whose language is English.
