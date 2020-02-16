@@ -99,3 +99,7 @@ JOIN country co ON co.Code = ci.CountryCode;
 SELECT ci.Name CityName, co.LifeExpectancy
 FROM city ci
 JOIN country co ON co.Code = ci.CountryCode;
+
+-- Sakila Database
+USE sakila;
+
