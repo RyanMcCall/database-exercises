@@ -26,9 +26,76 @@ AND s.to_date > NOW();
 USE world;
 
 -- What languages are spoken in Santa Monica?
-SELECT LANGUAGE, Percentage
+SELECT Language, Percentage
 FROM city ci
 JOIN country co ON co.code = ci.countrycode
 JOIN countrylanguage cl ON co.code = cl.countrycode
 WHERE ci.name = "santa monica"
 ORDER BY percentage;
+
+-- How many different countries are in each region?
+SELECT Region, COUNT(*) num_countries
+FROM country
+GROUP BY region
+ORDER BY num_countries;
+
+-- What is the population for each region?
+SELECT Region, SUM(population) AS Population
+FROM country
+GROUP BY region
+ORDER BY population DESC;
+
+-- What is the population for each continent?
+SELECT Continent, SUM(Population) AS Population
+FROM country
+GROUP BY Continent
+ORDER BY Population DESC;
+
+-- What is the average life expectancy globally?
+SELECT AVG(LifeExpectancy) AS avg_life_expec
+FROM country;
+
+-- What is the average life expectancy for each region, each continent? 
+-- Sort the results from shortest to longest
+SELECT region, AVG(LifeExpectancy) AS avg_life_expec
+FROM country
+GROUP BY region
+ORDER BY avg_life_expec;
+
+SELECT continent, AVG(LifeExpectancy) AS avg_life_expec
+FROM country
+GROUP BY continent
+ORDER BY avg_life_expec;
+
+-- Find all the countries whose local name is different from the official name
+SELECT Name AS OfficialCountryName, LocalCountryName
+FROM country
+WHERE Name NOT LIKE LocalName;
+
+-- How many countries have a life expectancy less than the average life expectancy?
+SELECT NAME country, LifeExpectancy AS life_expec
+FROM country
+WHERE LifeExpectancy < (
+	SELECT AVG(LifeExpectancy) AS avg_life_expec
+	FROM country)
+ORDER BY LifeExpectancy;
+    -- 82 countries
+
+-- What state is city x located in?
+SELECT Name city, District
+FROM city;
+
+-- What region of the world is city x located in?
+SELECT ci.Name city, co.Region region
+FROM city ci
+JOIN country co ON co.Code = ci.CountryCode;
+
+-- What country (use the human readable name) city x located in?
+SELECT ci.Name city, co.Name country
+FROM city ci
+JOIN country co ON co.Code = ci.CountryCode;
+
+-- What is the life expectancy in city x?
+SELECT ci.Name CityName, co.LifeExpectancy
+FROM city ci
+JOIN country co ON co.Code = ci.CountryCode;
