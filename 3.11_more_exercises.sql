@@ -21,3 +21,14 @@ WHERE dm.to_date > NOW()
 AND s.to_date > NOW();
 -- Both the Production and Customer Service make less then the average department salary
 -- with Production make -$11,189.30 less and Customer Service making -$8540.23 less.
+
+-- Use the world database for the questions below.
+USE world;
+
+-- What languages are spoken in Santa Monica?
+SELECT LANGUAGE, Percentage
+FROM city ci
+JOIN country co ON co.code = ci.countrycode
+JOIN countrylanguage cl ON co.code = cl.countrycode
+WHERE ci.name = "santa monica"
+ORDER BY percentage;
