@@ -192,3 +192,43 @@ WHERE f.title = "Hunchback Impossible";
 -- unintended consequence, films starting with the letters K and Q have also soared in 
 -- popularity. Use subqueries to display the titles of movies starting with the letters K 
 -- and Q whose language is English.
+SELECT f.title
+FROM film f
+JOIN language l ON f.language_id = l.language_id
+WHERE l.name = "English"
+AND f.film_id IN (SELECT film_id
+				FROM film
+				WHERE title LIKE "Q%"
+				OR title LIKE "K%");
+
+-- Use subqueries to display all actors who appear in the film Alone Trip.
+SELECT *
+FROM actor
+WHERE actor_id IN (SELECT actor_id
+					FROM film_actor
+					WHERE film_id = (SELECT film_id
+										FROM film
+										WHERE title = "Alone Trip"));
+
+-- You want to run an email marketing campaign in Canada, for which you will need the names
+-- and email addresses of all Canadian customers.
+SELECT first_name, last_name, email
+FROM customer
+WHERE address_id IN (SELECT address_id
+					FROM address
+					WHERE city_id IN (SELECT city_id
+										FROM city
+										WHERE country_id = (SELECT country_id
+															FROM country
+															WHERE country = "Canada")));
+-- I added a version with just joins to see if it was faster
+-- it is but only by like 10ms on average.
+SELECT cu.first_name, cu.last_name, cu.email
+FROM customer cu
+JOIN address a ON a.address_id = cu.address_id
+JOIN city ci ON ci.city_id = a.city_id
+JOIN country co ON co.country_id = ci.country_id
+WHERE country = "Canada";
+
+-- Sales have been lagging among young families, and you wish to target all family movies
+-- for a promotion. Identify all movies categorized as famiy films.
