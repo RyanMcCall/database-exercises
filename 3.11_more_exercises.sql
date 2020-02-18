@@ -232,3 +232,59 @@ WHERE country = "Canada";
 
 -- Sales have been lagging among young families, and you wish to target all family movies
 -- for a promotion. Identify all movies categorized as famiy films.
+SELECT f.film_id, f.title
+FROM film f
+JOIN film_category fc ON fc.film_id = f.film_id
+JOIN category c ON c.category_id = fc.category_id
+WHERE c.name = "Family";
+
+-- Write a query to display how much business, in dollars, each store brought in.
+SELECT store.store_id, 
+	SUM(amount)
+FROM payment
+JOIN staff ON staff.staff_id = payment.staff_id
+JOIN store ON store.manager_staff_id = staff.staff_id
+GROUP BY store.store_id;
+
+-- Write a query to display for each store its store ID, city, and country.
+SELECT s.store_id, ci.city, co.country
+FROM store s
+JOIN address a ON a.address_id = s.address_id
+JOIN city ci ON ci.city_id = a.city_id
+JOIN country co ON co.country_id = ci.country_id;
+
+-- List the top five genres in gross revenue in descending order. (Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+SELECT c.name, SUM(p.amount) gross_revenue
+FROM payment p
+JOIN rental r ON r.rental_id = p.rental_id
+JOIN inventory i ON r.inventory_id = i.inventory_id
+JOIN film_category fc ON i.film_id = fc.film_id
+JOIN category c ON c.category_id = fc.category_id
+GROUP BY c.name
+ORDER BY SUM(p.amount) DESC
+LIMIT 5;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- What are the sales for each store for each month in 2005?
+SELECT DATE_FORMAT(payment_date, '%Y-%m') "month", 
+	store.store_id, 
+	SUM(amount)
+FROM payment
+JOIN staff ON staff.staff_id = payment.staff_id
+JOIN store ON store.manager_staff_id = staff.staff_id
+GROUP BY month, store.store_id
+HAVING month LIKE "2005%"
+ORDER BY month;
