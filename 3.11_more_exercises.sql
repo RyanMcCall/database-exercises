@@ -264,6 +264,32 @@ GROUP BY c.name
 ORDER BY SUM(p.amount) DESC
 LIMIT 5;
 
+-- Select all columns from the actor table.
+SELECT *
+FROM actor;
+
+-- Select only the last_name column from the actor table.
+SELECT last_name
+FROM actor;
+
+-- Select all distinct (different) last names from the actor table.
+SELECT DISTINCT last_name
+FROM actor;
+
+-- Select all distinct (different) postal codes from the address table.
+SELECT DISTINCT postal_code
+FROM address;
+
+-- Select all distinct (different) ratings from the film table.
+SELECT DISTINCT rating
+FROM film;
+
+
+
+
+
+
+
 
 
 
