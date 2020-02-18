@@ -532,24 +532,34 @@ GROUP BY title
 ORDER BY COUNT(*) DESC
 LIMIT 5;
 
+-- What are the most most profitable films (in terms of gross revenue)?
+SELECT f.title, SUM(amount) total
+FROM payment p
+JOIN rental r ON r.rental_id = p.rental_id
+JOIN inventory i ON i.inventory_id = r.inventory_id
+JOIN film f ON f.film_id = i.film_id
+GROUP BY f.title
+ORDER BY total DESC
+LIMIT 5;
 
+-- Who is the best customer?
+SELECT CONCAT(c.last_name, ", ", c.first_name) name,
+	SUM(amount) total
+FROM payment p
+JOIN customer c ON c.customer_id = p.customer_id
+GROUP BY name
+ORDER BY total DESC
+LIMIT 1;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- Who are the most popular actors (that have appeared in the most films)?
+SELECT CONCAT(a.last_name, ", ", a.first_name) actor_name,
+	COUNT(*) num_appearances
+FROM film f
+JOIN film_actor fa ON fa.film_id = f.film_id
+JOIN actor a ON a.actor_id = fa.actor_id
+GROUP BY actor_name
+ORDER BY num_appearances DESC
+LIMIT 5;
 
 -- What are the sales for each store for each month in 2005?
 SELECT DATE_FORMAT(payment_date, '%Y-%m') "month", 
@@ -561,3 +571,15 @@ JOIN store ON store.manager_staff_id = staff.staff_id
 GROUP BY month, store.store_id
 HAVING month LIKE "2005%"
 ORDER BY month;
+
+-- Bonus: Find the film title, customer name, customer phone number, and customer address
+-- for all the outstanding DVDs.
+SELECT f.title,
+	CONCAT(c.last_name, ", ", c.first_name),
+	a.phone
+FROM rental r
+JOIN customer c ON c.customer_id = r.customer_id
+JOIN address a ON c.address_id = a.address_id
+JOIN inventory i ON i.inventory_id = r.inventory_id
+JOIN film f ON f.film_id = i.film_id
+WHERE r.return_date IS NULL;
