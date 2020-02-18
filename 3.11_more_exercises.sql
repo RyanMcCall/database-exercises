@@ -253,7 +253,7 @@ JOIN address a ON a.address_id = s.address_id
 JOIN city ci ON ci.city_id = a.city_id
 JOIN country co ON co.country_id = ci.country_id;
 
--- List the top five genres in gross revenue in descending order. (Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+-- List the top five genres in gross revenue in descending order.
 SELECT c.name, SUM(p.amount) gross_revenue
 FROM payment p
 JOIN rental r ON r.rental_id = p.rental_id
@@ -284,6 +284,253 @@ FROM address;
 SELECT DISTINCT rating
 FROM film;
 
+-- Select the title, description, rating, movie length columns from the films table that
+-- last 3 hours or longer.
+SELECT title, description, rating, length
+FROM film
+WHERE length > 180;
+
+-- Select the payment id, amount, and payment date columns from the payments table for
+-- payments made on or after 05/27/2005.
+SELECT payment_id, amount, payment_date
+FROM payment
+WHERE payment_date >= "2005-05-27";
+
+-- Select the primary key, amount, and payment date columns from the payment table for
+-- payments made on 05/27/2005.
+SELECT payment_id, amount, payment_date
+FROM payment
+WHERE payment_date LIKE "2005-05-27%";
+
+-- Select all columns from the customer table for rows that have a last names beginning
+-- with S and a first names ending with N.
+SELECT *
+FROM customer
+WHERE last_name LIKE "S%"
+AND first_name LIKE "N%";
+
+-- Select all columns from the customer table for rows where the customer is inactive or
+-- has a last name beginning with "M".
+SELECT *
+FROM customer
+WHERE active = 0
+OR last_name LIKE "M%";
+
+-- Select all columns from the category table for rows where the primary key is greater 
+-- than 4 and the name field begins with either C, S or T.
+SELECT *
+FROM category
+WHERE category_id > 4
+AND name REGEXP "^[cst]";
+
+-- Select all columns minus the password column from the staff table for rows that contain
+-- a password.
+SELECT staff_id, 
+	first_name, 
+	last_name, 
+	address_id, 
+	picture, 
+	email, 
+	store_id, 
+	active, 
+	username, 
+	last_update
+FROM staff
+WHERE password IS NOT NULL;
+
+-- Select all columns minus the password column from the staff table for rows that do not
+-- contain a password.
+
+SELECT staff_id, 
+	first_name, 
+	last_name, 
+	address_id, 
+	picture, 
+	email, 
+	store_id, 
+	active, 
+	username, 
+	last_update
+FROM staff
+WHERE password IS NULL;
+
+-- Select the phone and district columns from the address table for addresses in
+-- California, England, Taipei, or West Java.
+SELECT phone, district
+FROM address
+WHERE district IN ("California", "England", "Taipei", "West Java");
+
+-- Select the payment id, amount, and payment date columns from the payment table for 
+-- payments made on 05/25/2005, 05/27/2005, and 05/29/2005.
+SELECT payment_id, amount, payment_date
+FROM payment
+WHERE DATE(payment_date) IN ("2005-05-25", "2005-05-27", "2005-05-29");
+
+-- Select all columns from the film table for films rated G, PG-13 or NC-17.
+SELECT *
+FROM film
+WHERE rating IN ("G", "PG-13", "NC-17");
+
+-- Select all columns from the payment table for payments made between midnight 05/25/2005
+-- and 1 second before midnight 05/26/2005.
+SELECT *
+FROM payment
+WHERE payment_date BETWEEN "2005-05-25 00:00:00" AND "2005-05-26 23:59:59";
+
+-- Select all columns from the film table for films where the length of the 
+-- description is between 100 and 120.
+SELECT *
+FROM film
+WHERE LENGTH(description) BETWEEN 100 AND 120;
+
+-- Select all columns from the film table for rows where the description begins with
+-- "A Thoughtful".
+SELECT *
+FROM film
+WHERE description LIKE "A Thoughtful%";
+
+-- Select all columns from the film table for rows where the description ends
+-- with the word "Boat".
+SELECT *
+FROM film
+WHERE description LIKE "%Boat";
+
+-- Select the following columns from the film table where the description contains the word
+-- "Database" and the length of the film is greater than 3 hours.
+SELECT *
+FROM film
+WHERE description LIKE "%Database%"
+AND length > 180;
+
+-- Select all columns from the payment table and only include the first 20 rows.
+SELECT *
+FROM payment
+LIMIT 20;
+
+-- Select the payment date and amount columns from the payment table for rows where the
+--  payment amount is greater than 5, and only select rows whose zero-based index in the
+-- result set is between 1000-2000.
+SELECT *
+FROM payment
+WHERE amount > 5
+LIMIT 1000
+OFFSET 1000;
+
+-- Select all columns from the customer table, limiting results to those where the 
+-- zero-based index is between 101-200.
+SELECT *
+FROM customer
+LIMIT 100
+OFFSET 100;
+
+-- Select all columns from the film table and order rows by the length field in ascending
+-- order.
+SELECT *
+FROM film
+ORDER BY length;
+
+-- Select all distinct ratings from the film table ordered by rating in descending order.
+SELECT DISTINCT rating
+FROM film
+ORDER BY rating DESC;
+
+-- Select the payment date and amount columns from the payment table for the first 20
+-- payments ordered by payment amount in descending order.
+SELECT payment_date, amount
+FROM payment
+ORDER BY amount DESC
+LIMIT 20;
+
+-- Select the title, description, special features, length, and rental duration columns
+-- from the film table for the first 10 films with behind the scenes footage under 2 hours
+-- in length and a rental duration between 5 and 7 days, ordered by length in descending
+-- order.
+SELECT title, description, special_features, length, rental_duration
+FROM film
+WHERE special_features LIKE "%Behind the Scenes%"
+	AND length < 120
+	AND rental_duration BETWEEN 5 AND 7
+LIMIT 10;
+
+-- Select customer first_name/last_name and actor first_name/last_name columns from
+-- performing a left join between the customer and actor column on the last_name column
+--  in each table. (i.e. customer.last_name = actor.last_name)
+SELECT c.first_name customer_first_name,
+	c.last_name customer_last_name,
+	a.first_name actor_first_name,
+	a.last_name actor_last_name
+FROM customer c
+LEFT JOIN actor a ON c.last_name = a.last_name;
+
+-- Select the customer first_name/last_name and actor first_name/last_name columns from
+-- performing a right join between the customer and actor column on the last_name column
+-- in each table. 
+SELECT c.first_name customer_first_name,
+	c.last_name customer_last_name,
+	a.first_name actor_first_name,
+	a.last_name actor_last_name
+FROM customer c
+RIGHT JOIN actor a ON c.last_name = a.last_name;
+
+-- Select the customer first_name/last_name and actor first_name/last_name columns from 
+-- performing an inner join between the customer and actor column on the last_name column
+-- in each table.
+SELECT c.first_name customer_first_name,
+	c.last_name customer_last_name,
+	a.first_name actor_first_name,
+	a.last_name actor_last_name
+FROM customer c
+JOIN actor a ON c.last_name = a.last_name;
+
+-- Select the city name and country name columns from the city table, performing a left 
+-- join with the country table to get the country name column.
+SELECT city, country
+FROM city
+LEFT JOIN country ON city.country_id = country.country_id;
+
+-- Select the title, description, release year, and language name columns from the film 
+-- table, performing a left join with the language table to get the "language" column.
+SELECT f.title, f.description, f.release_year, l.name language
+FROM film f
+LEFT JOIN language l ON l.language_id = f.language_id;
+
+-- Select the first_name, last_name, address, address2, city name, district, and postal
+-- code columns from the staff table, performing 2 left joins with the address table then 
+-- the city table to get the address and city related columns.
+SELECT s.first_name, 
+	s.last_name, 
+	a.address, 
+	a.address2, 
+	c.city city_name, 
+	a.district, 
+	a.postal_code
+FROM staff s
+LEFT JOIN address a ON s.address_id = a.address_id
+LEFT JOIN city c ON c.city_id = a.city_id;
+
+-- What is the average replacement cost of a film? Does this change depending on the rating
+-- of the film?
+SELECT AVG(replacement_cost)
+FROM film;
+
+SELECT rating, AVG(replacement_cost)
+FROM film
+GROUP BY rating;
+
+-- How many different films of each genre are in the database?
+SELECT name, COUNT(*)
+FROM film_category fc
+JOIN category c ON c.category_id = fc.category_id
+GROUP BY name;
+
+-- What are the 5 frequently rented films?
+SELECT title, COUNT(*) total
+FROM rental r
+JOIN inventory i ON i.inventory_id = r.inventory_id
+JOIN film f ON f.film_id = i.film_id
+GROUP BY title
+ORDER BY COUNT(*) DESC
+LIMIT 5;
 
 
 
